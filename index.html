@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>开源软件导航 · 只收真正免费开源的优质工具</title>
+<meta name="description" content="精选真正免费、开源的优质软件，按使用场景分类，每个都直达官网，无任何广告。" />
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --text: #1a1d21;
+    --muted: #6b7280;
+    --border: #e6e8eb;
+    --accent: #2f6f4f;
+    --accent-soft: #e8f3ec;
+    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 4px 16px rgba(16,24,40,.06);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1115;
+      --surface: #171a20;
+      --text: #e8eaed;
+      --muted: #9aa0a8;
+      --border: #262b33;
+      --accent: #5fd39a;
+      --accent-soft: #163024;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* Header */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: saturate(150%) blur(8px);
+  }
+  .head-inner { display: flex; align-items: center; gap: 14px; padding: 14px 20px; max-width: 1080px; margin: 0 auto; }
+  .logo {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), #3a8f63);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 18px; flex: 0 0 auto;
+  }
+  .head-title { font-size: 17px; font-weight: 700; letter-spacing: .2px; }
+  .head-sub { font-size: 12.5px; color: var(--muted); }
+  .head-spacer { flex: 1; }
+  .count-pill {
+    font-size: 12px; color: var(--accent); background: var(--accent-soft);
+    padding: 4px 10px; border-radius: 999px; font-weight: 600; white-space: nowrap;
+  }
+
+  /* Hero */
+  .hero { padding: 36px 0 8px; text-align: center; }
+  .hero h1 { font-size: 30px; margin: 0 0 10px; letter-spacing: -.5px; }
+  .hero p { color: var(--muted); margin: 0 auto; max-width: 640px; font-size: 15px; }
+
+  /* Search */
+  .search-bar { margin: 22px auto 8px; max-width: 560px; position: relative; }
+  .search-bar input {
+    width: 100%; padding: 13px 16px 13px 42px; font-size: 15px;
+    border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+    color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .search-bar input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .search-bar svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 18px 0 6px; }
+  .chip {
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+    padding: 7px 14px; border-radius: 999px; font-size: 13.5px; cursor: pointer; user-select: none;
+    transition: all .15s; font-weight: 500;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* Grid */
+  .grid {
+    display: grid; gap: 14px; padding: 22px 0 60px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px; display: flex; flex-direction: column; gap: 8px;
+    box-shadow: var(--shadow); transition: transform .15s, border-color .15s;
+    text-decoration: none; color: inherit;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .card-head { display: flex; align-items: center; gap: 11px; }
+  .card-ico {
+    width: 40px; height: 40px; border-radius: 10px; flex: 0 0 auto; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; background: #f0f2f5;
+  }
+  .card-logo { width: 100%; height: 100%; object-fit: contain; padding: 6px; box-sizing: border-box; display: block; }
+  .card-ico-text { display: none; font-weight: 700; font-size: 16px; color: var(--accent); }
+  .card-logo[style*="display: none"] + .card-ico-text { display: flex; }
+  .card-name { font-size: 16px; font-weight: 700; margin: 0; }
+  .card-cat { font-size: 11.5px; color: var(--muted); }
+  .card-desc { font-size: 13.5px; color: var(--muted); margin: 2px 0 0; flex: 1; }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+  .card-tag {
+    font-size: 11px; color: var(--accent); background: var(--accent-soft);
+    padding: 3px 9px; border-radius: 6px; font-weight: 600;
+  }
+  .card-heat { font-size: 11.5px; color: var(--muted); margin-top: 2px; letter-spacing: .3px; }
+  .card-go { font-size: 13px; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 3px; }
+  .card:hover .card-go { text-decoration: underline; }
+
+  .empty { text-align: center; color: var(--muted); padding: 50px 0; grid-column: 1 / -1; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--border); background: var(--surface); padding: 22px 0; text-align: center; }
+  footer p { color: var(--muted); font-size: 13px; margin: 4px 0; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="head-inner">
+      <div class="logo">OS</div>
+      <div>
+        <div class="head-title">开源软件导航</div>
+        <div class="head-sub">免费 · 无广告 · 无需付费 · 按热度排序</div>
+      </div>
+      <div class="head-spacer"></div>
+      <div class="count-pill" id="countPill">收录 0 款</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>常用免费软件导航 · 按热度排序，直达官网</h1>
+      <p>每一个工具都经过筛选：完全免费、无广告、无需付费即可使用，并按受欢迎程度从高到低排列。开源项目与各大厂产品都在这里，按场景挑就好。</p>
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="搜索软件名称或用途，如：笔记、视频、密码…" />
+      </div>
+      <div class="filters" id="filters"></div>
+    </section>
+
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <footer>
+    <p>本站收录完全免费、无广告、无需付费即可使用的软件（含开源项目与各大厂产品），站点本身不放置任何广告。</p>
+    <p>所有链接均直接指向软件的官方网站或开源代码仓库。</p>
+  </footer>
+
+<script>
+  // 数据：只收录真正免费 + 开源的优质软件，每个 url 直达官网
+  const DATA = [
+    // 办公效率
+    { name: "LibreOffice", cat: "办公效率", desc: "功能完整的开源办公套件，兼容 Word/Excel/PPT。", url: "https://www.libreoffice.org" },
+    { name: "ONLYOFFICE", cat: "办公效率", desc: "文档、表格、演示三件套，注重协作与兼容性。", url: "https://www.onlyoffice.com" },
+    { name: "Joplin", cat: "办公效率", desc: "开源笔记与待办，支持端到端加密与多端同步。", url: "https://joplinapp.org" },
+    { name: "Logseq", cat: "办公效率", desc: "本地优先的知识库与大纲笔记，数据归你所有。", url: "https://logseq.com" },
+    { name: "LyX", cat: "办公效率", desc: "基于 LaTeX 的文档排版工具，写论文很顺手。", url: "https://www.lyx.org" },
+    { name: "Zotero", cat: "办公效率", desc: "开源文献管理，一键收集与引用论文。", url: "https://www.zotero.org" },
+    { name: "Calibre", cat: "办公效率", desc: "强大的开源电子书管理、转换与阅读。", url: "https://calibre-ebook.com" },
+    { name: "diagrams.net", cat: "办公效率", desc: "免费开源的流程图/思维导图绘制工具。", url: "https://www.diagrams.net" },
+    { name: "Cryptomator", cat: "办公效率", desc: "开源客户端，给云盘文件做端到端加密。", url: "https://cryptomator.org" },
+
+    // 浏览器与网络
+    { name: "Firefox", cat: "浏览器与网络", desc: "老牌开源浏览器，重视隐私与可定制性。", url: "https://www.mozilla.org/firefox/new/" },
+    { name: "Brave", cat: "浏览器与网络", desc: "默认拦截广告与追踪，基于 Chromium 开源构建。", url: "https://brave.com" },
+    { name: "Tor Browser", cat: "浏览器与网络", desc: "面向匿名与抗审查的浏览器，保护上网痕迹。", url: "https://www.torproject.org" },
+    { name: "qBittorrent", cat: "浏览器与网络", desc: "无广告的 BT/磁力下载客户端，轻量好用。", url: "https://www.qbittorrent.org" },
+    { name: "Transmission", cat: "浏览器与网络", desc: "极简的 BT 下载工具，跨平台且资源占用低。", url: "https://transmissionbt.com" },
+    { name: "Floorp", cat: "浏览器与网络", desc: "基于 Firefox 的高可定制开源浏览器。", url: "https://floorp.app" },
+
+    // 开发工具
+    { name: "Visual Studio Code", cat: "开发工具", desc: "微软开源的代码编辑器，插件生态极其丰富。", url: "https://code.visualstudio.com" },
+    { name: "Git", cat: "开发工具", desc: "事实标准的分布式版本控制工具。", url: "https://git-scm.com" },
+    { name: "Neovim", cat: "开发工具", desc: "现代化重构的 Vim，强在扩展与脚本能力。", url: "https://neovim.io" },
+    { name: "Node.js", cat: "开发工具", desc: "开源 JavaScript 运行时，前后端通吃。", url: "https://nodejs.org" },
+    { name: "VSCodium", cat: "开发工具", desc: "剔除遥测的 VS Code 纯开源构建。", url: "https://vscodium.com" },
+    { name: "Hoppscotch", cat: "开发工具", desc: "轻量开源 API 测试工具，替代 Postman。", url: "https://hoppscotch.io" },
+    { name: "DBeaver", cat: "开发工具", desc: "开源通用数据库管理工具，支持多种库。", url: "https://dbeaver.io" },
+    { name: "Podman", cat: "开发工具", desc: "无守护进程的开源容器引擎，Docker 替代。", url: "https://podman.io" },
+    { name: "Tabby", cat: "开发工具", desc: "开源现代化终端，支持 SSH/Serial/多平台。", url: "https://tabby.sh" },
+
+    // 图像与设计
+    { name: "GIMP", cat: "图像与设计", desc: "开源的图像编辑利器，Photoshop 的免费替代。", url: "https://www.gimp.org" },
+    { name: "Inkscape", cat: "图像与设计", desc: "专业级矢量图形编辑器，支持 SVG。", url: "https://inkscape.org" },
+    { name: "Krita", cat: "图像与设计", desc: "面向插画与概念设计的开源数字绘画工具。", url: "https://krita.org" },
+    { name: "Blender", cat: "图像与设计", desc: "全能 3D 创作套件：建模、动画、渲染、剪辑。", url: "https://www.blender.org" },
+    { name: "darktable", cat: "图像与设计", desc: "开源摄影后期与 RAW 处理，数字暗房。", url: "https://www.darktable.org" },
+    { name: "RawTherapee", cat: "图像与设计", desc: "开源 RAW 图像处理，细节还原强。", url: "https://www.rawtherapee.com" },
+    { name: "Scribus", cat: "图像与设计", desc: "开源桌面排版软件，做画册海报很专业。", url: "https://www.scribus.net" },
+
+    // 音视频
+    { name: "VLC", cat: "音视频", desc: "几乎能播放任何格式的开源万能播放器。", url: "https://www.videolan.org/vlc/" },
+    { name: "Audacity", cat: "音视频", desc: "跨平台开源音频录制与编辑软件。", url: "https://www.audacityteam.org" },
+    { name: "HandBrake", cat: "音视频", desc: "开源视频转码工具，压缩与格式转换利器。", url: "https://handbrake.fr" },
+    { name: "OBS Studio", cat: "音视频", desc: "开源录屏与直播推流软件，主播标配。", url: "https://obsproject.com" },
+    { name: "Strawberry", cat: "音视频", desc: "开源音乐播放器，专注本地曲库与音质。", url: "https://www.strawberrymusicplayer.org" },
+    { name: "MPV", cat: "音视频", desc: "极简高画质开源视频播放器，可脚本化。", url: "https://mpv.io" },
+    { name: "Audacious", cat: "音视频", desc: "轻量开源音乐播放器，低资源占用。", url: "https://audacious-media-player.org" },
+    { name: "Kdenlive", cat: "音视频", desc: "开源非线性视频剪辑软件，功能齐全。", url: "https://kdenlive.org" },
+    { name: "Shotcut", cat: "音视频", desc: "跨平台开源视频编辑，格式支持广泛。", url: "https://www.shotcut.org" },
+
+    // 文件与压缩
+    { name: "7-Zip", cat: "文件与压缩", desc: "高压缩比的开源压缩工具，支持 7z/Zip 等。", url: "https://www.7-zip.org" },
+    { name: "PeaZip", cat: "文件与压缩", desc: "开源压缩与文件管理，界面友好、格式齐全。", url: "https://peazip.github.io" },
+    { name: "FileZilla", cat: "文件与压缩", desc: "老牌开源 FTP/SFTP 客户端。", url: "https://filezilla-project.org" },
+    { name: "FreeFileSync", cat: "文件与压缩", desc: "开源文件夹比对与增量同步工具。", url: "https://freefilesync.org" },
+    { name: "Double Commander", cat: "文件与压缩", desc: "开源双栏文件管理器，效率高。", url: "https://doublecmd.sourceforge.io" },
+    { name: "Czkawka", cat: "文件与压缩", desc: "开源重复文件/相似图片清理工具。", url: "https://github.com/qarmin/czkawka" },
+
+    // 安全与隐私
+    { name: "KeePass", cat: "安全与隐私", desc: "本地存储的开源密码管理器，数据库归你掌控。", url: "https://keepass.info" },
+    { name: "KeePassXC", cat: "安全与隐私", desc: "跨平台版 KeePass，体验更现代。", url: "https://keepassxc.org" },
+    { name: "Bitwarden", cat: "安全与隐私", desc: "开源密码库，支持自托管与端到端加密。", url: "https://bitwarden.com" },
+    { name: "VeraCrypt", cat: "安全与隐私", desc: "开源磁盘/分区加密，保护敏感数据。", url: "https://www.veracrypt.fr" },
+    { name: "GnuPG", cat: "安全与隐私", desc: "开源加密与签名工具，PGP 标准实现。", url: "https://gnupg.org" },
+    { name: "Pi-hole", cat: "安全与隐私", desc: "开源网络级去广告 DNS  sinkhole。", url: "https://pi-hole.net" },
+    { name: "WireGuard", cat: "安全与隐私", desc: "极简高性能的开源 VPN 协议。", url: "https://www.wireguard.com" },
+
+    // 系统工具
+    { name: "Sumatra PDF", cat: "系统工具", desc: "极轻量的 PDF / ePub / 漫画阅读器。", url: "https://www.sumatrapdfreader.org" },
+    { name: "Greenshot", cat: "系统工具", desc: "开源截图工具，支持标注与快速编辑。", url: "https://getgreenshot.org" },
+    { name: "ShareX", cat: "系统工具", desc: "开源截图/录屏/自动化分享利器（Windows）。", url: "https://getsharex.com" },
+    { name: "PDF Arranger", cat: "系统工具", desc: "开源 PDF 页面合并/拆分/重排工具。", url: "https://github.com/pdfarranger/pdfarranger" },
+    { name: "Rclone", cat: "系统工具", desc: "开源命令行云盘同步，挂载各网盘。", url: "https://rclone.org" },
+    { name: "Ventoy", cat: "系统工具", desc: "开源启动盘工具，一个 U 盘装多个 ISO。", url: "https://www.ventoy.net" },
+    { name: "BleachBit", cat: "系统工具", desc: "开源系统清理工具，释放磁盘空间。", url: "https://www.bleachbit.org" },
+
+    // 通讯协作
+    { name: "Signal", cat: "通讯协作", desc: "端到端加密的开源即时通讯，隐私标杆。", url: "https://signal.org" },
+    { name: "Thunderbird", cat: "通讯协作", desc: "开源邮件客户端，附带日历与订阅源。", url: "https://www.thunderbird.net" },
+    { name: "Element", cat: "通讯协作", desc: "基于 Matrix 的开源去中心化聊天客户端。", url: "https://element.io" },
+    { name: "Jitsi Meet", cat: "通讯协作", desc: "开源视频会议，无需账号即可用。", url: "https://jitsi.org" },
+    { name: "Rocket.Chat", cat: "通讯协作", desc: "开源团队沟通与协作平台，可自托管。", url: "https://rocket.chat" },
+    { name: "Mastodon", cat: "通讯协作", desc: "开源去中心化社交网络，无算法操控。", url: "https://joinmastodon.org" },
+
+    // 下载与同步
+    { name: "LocalSend", cat: "下载与同步", desc: "开源局域网跨设备文件互传，免服务器。", url: "https://localsend.org" },
+    { name: "Nextcloud", cat: "下载与同步", desc: "开源自建网盘与私有云协作套件。", url: "https://nextcloud.com" },
+    { name: "Floccus", cat: "下载与同步", desc: "开源书签同步，跨浏览器同步收藏夹。", url: "https://floccus.org" },
+
+    // ===== 国内大厂（腾讯 / 阿里 / 360）免费工具 =====
+    // 办公效率
+    { name: "腾讯文档", cat: "办公效率", type: "brand", desc: "腾讯在线多人协作文档、表格与幻灯片。", url: "https://docs.qq.com" },
+    { name: "语雀", cat: "办公效率", type: "brand", desc: "阿里旗下知识库与文档工具，结构化写作。", url: "https://www.yuque.com" },
+    { name: "钉钉", cat: "办公效率", type: "brand", desc: "阿里企业办公与协同平台，考勤审批 IM 一体。", url: "https://www.dingtalk.com" },
+
+    // 浏览器与网络
+    { name: "360极速浏览器", cat: "浏览器与网络", type: "brand", desc: "基于 Chromium 的双核浏览器，相对清爽。", url: "https://browser.360.cn" },
+
+    // 通讯协作
+    { name: "腾讯会议", cat: "通讯协作", type: "brand", desc: "免费高清视频会议，一键入会。", url: "https://meeting.tencent.com" },
+    { name: "企业微信", cat: "通讯协作", type: "brand", desc: "腾讯企业沟通与办公平台，连接微信生态。", url: "https://work.weixin.qq.com" },
+    { name: "微信", cat: "通讯协作", type: "brand", desc: "国民级即时通讯，提供桌面客户端。", url: "https://weixin.qq.com" },
+
+    // 文件与压缩
+    { name: "360压缩", cat: "文件与压缩", type: "brand", desc: "免费解压缩，支持多种格式，界面简洁。", url: "https://yasuo.360.cn" },
+
+    // 下载与同步
+    { name: "阿里云盘", cat: "下载与同步", type: "brand", desc: "阿里大容量免费网盘，上传下载不限速。", url: "https://www.aliyundrive.com" },
+    { name: "腾讯微云", cat: "下载与同步", type: "brand", desc: "腾讯云存储，文件备份与多端同步。", url: "https://www.weiyun.com" },
+
+    // 系统工具
+    { name: "微信输入法", cat: "系统工具", type: "brand", desc: "腾讯免费输入法，词库智能、跨端同步。", url: "https://zhiyan.weixin.qq.com" },
+    { name: "360驱动大师", cat: "系统工具", type: "brand", desc: "驱动检测、备份与一键安装，实用清爽。", url: "https://www.360.cn" },
+
+    // 安全与隐私
+    { name: "360安全卫士", cat: "安全与隐私", type: "brand", desc: "免费杀毒与系统防护，国内装机量大。", url: "https://www.360.cn" },
+    { name: "腾讯电脑管家", cat: "安全与隐私", type: "brand", desc: "腾讯免费安全防护与系统清理工具。", url: "https://guanjia.qq.com" },
+
+    // 音视频
+    { name: "QQ影音", cat: "音视频", type: "brand", desc: "腾讯本地影音播放器，无广告、格式全。", url: "https://player.qq.com" },
+
+    // ===== 本轮扩充：免费 + 无广告 + 无需付费 的更多常用软件（含热度字段）=====
+    // 办公效率
+    { name: "Notion", cat: "办公效率", type: "brand", heat: 90, desc: "热门笔记与知识库，免费版够用、无广告。", url: "https://www.notion.so" },
+    { name: "Obsidian", cat: "办公效率", type: "free", heat: 88, desc: "本地优先的 Markdown 笔记，个人免费、无广告。", url: "https://obsidian.md" },
+    { name: "MarkText", cat: "办公效率", heat: 70, desc: "开源 Markdown 编辑器，简洁实时预览。", url: "https://marktext.app" },
+    { name: "Standard Notes", cat: "办公效率", heat: 68, desc: "开源加密笔记，跨平台同步。", url: "https://standardnotes.com" },
+
+    // 浏览器与网络
+    { name: "Google Chrome", cat: "浏览器与网络", type: "brand", heat: 99, desc: "全球最流行的浏览器，免费、无广告。", url: "https://www.google.com/chrome/" },
+    { name: "Microsoft Edge", cat: "浏览器与网络", type: "brand", heat: 95, desc: "Windows 自带 Chromium 浏览器，免费无广告。", url: "https://www.microsoft.com/edge" },
+    { name: "uBlock Origin", cat: "浏览器与网络", heat: 92, desc: "开源广告拦截插件，高效省资源。", url: "https://ublockorigin.com" },
+    { name: "Chromium", cat: "浏览器与网络", heat: 82, desc: "Chrome 的开源内核，可单独使用。", url: "https://www.chromium.org" },
+    { name: "DuckDuckGo", cat: "浏览器与网络", type: "brand", heat: 78, desc: "注重隐私的浏览器与搜索引擎，免费无广告。", url: "https://duckduckgo.com" },
+    { name: "Opera", cat: "浏览器与网络", type: "brand", heat: 76, desc: "免费浏览器，内置 VPN 与侧边栏。", url: "https://www.opera.com" },
+    { name: "Vivaldi", cat: "浏览器与网络", type: "brand", heat: 74, desc: "高度可定制免费浏览器，功能丰富。", url: "https://vivaldi.com" },
+    { name: "LibreWolf", cat: "浏览器与网络", heat: 68, desc: "聚焦隐私的 Firefox 开源衍生版。", url: "https://librewolf.net" },
+    { name: "Waterfox", cat: "浏览器与网络", heat: 64, desc: "开源 Firefox 分支，支持旧扩展。", url: "https://www.waterfox.net" },
+
+    // 开发工具
+    { name: "Python", cat: "开发工具", heat: 93, desc: "开源编程语言与解释器，AI/脚本首选。", url: "https://www.python.org" },
+    { name: "PuTTY", cat: "开发工具", heat: 86, desc: "开源 SSH/Telnet 客户端，运维常用。", url: "https://www.putty.org" },
+    { name: "GitHub Desktop", cat: "开发工具", heat: 84, desc: "开源 GitHub 图形客户端，提交更直观。", url: "https://desktop.github.com" },
+    { name: "WinSCP", cat: "开发工具", heat: 84, desc: "开源 SFTP/FTP 客户端，文件传输利器。", url: "https://winscp.net" },
+    { name: "Android Studio", cat: "开发工具", type: "brand", heat: 83, desc: "谷歌官方安卓开发环境，免费。", url: "https://developer.android.com/studio" },
+    { name: "Visual Studio Community", cat: "开发工具", type: "brand", heat: 82, desc: "微软免费版 IDE，个人开发够用。", url: "https://visualstudio.microsoft.com" },
+    { name: "IntelliJ IDEA Community", cat: "开发工具", heat: 80, desc: "开源 Java/Kotlin IDE，JetBrains 社区版。", url: "https://www.jetbrains.com/idea/" },
+    { name: "Eclipse", cat: "开发工具", heat: 76, desc: "老牌开源 IDE，Java 生态常用。", url: "https://www.eclipse.org" },
+    { name: "Docker", cat: "开发工具", type: "brand", heat: 78, desc: "容器化开发事实标准，个人免费。", url: "https://www.docker.com" },
+    { name: "Insomnia", cat: "开发工具", heat: 72, desc: "开源 API 客户端，调试 REST/GraphQL。", url: "https://insomnia.rest" },
+    { name: "Oh My Zsh", cat: "开发工具", heat: 70, desc: "开源 Zsh 配置框架，命令行更顺手。", url: "https://ohmyz.sh" },
+
+    // 图像与设计
+    { name: "Figma", cat: "图像与设计", type: "brand", heat: 89, desc: "热门界面/原型设计工具，免费版够用。", url: "https://www.figma.com" },
+    { name: "Canva", cat: "图像与设计", type: "brand", heat: 87, desc: "在线设计平台，模板丰富、免费可用。", url: "https://www.canva.com" },
+    { name: "Paint.NET", cat: "图像与设计", type: "free", heat: 80, desc: "Windows 免费图像编辑，轻量易上手。", url: "https://www.getpaint.net" },
+    { name: "ScreenToGif", cat: "图像与设计", heat: 78, desc: "开源录屏转 GIF 与轻量编辑工具。", url: "https://www.screentogif.com" },
+    { name: "Pencil Project", cat: "图像与设计", heat: 64, desc: "开源原型设计工具，画界面线框图。", url: "https://pencil.evolus.vn" },
+
+    // 音视频
+    { name: "PotPlayer", cat: "音视频", type: "free", heat: 90, desc: "韩国免费本地播放器，格式全、无广告。", url: "https://potplayer.daum.net" },
+    { name: "foobar2000", cat: "音视频", type: "free", heat: 82, desc: "Windows 免费高音质音乐播放器。", url: "https://www.foobar2000.org" },
+    { name: "DaVinci Resolve", cat: "音视频", type: "brand", heat: 84, desc: "专业免费版视频剪辑调色软件（Studio 付费）。", url: "https://www.blackmagicdesign.com/products/davinciresolve/" },
+    { name: "AIMP", cat: "音视频", type: "free", heat: 78, desc: "免费音乐播放器，音效与格式支持好。", url: "https://www.aimp.ru" },
+    { name: "MusicBee", cat: "音视频", type: "free", heat: 76, desc: "免费音乐管理播放器，整理曲库强。", url: "https://getmusicbee.com" },
+    { name: "OpenShot", cat: "音视频", heat: 74, desc: "开源视频剪辑，界面友好易上手。", url: "https://www.openshot.org" },
+    { name: "LosslessCut", cat: "音视频", heat: 76, desc: "开源无损视频切割与合并工具。", url: "https://www.losslesscut.app" },
+
+    // 文件与压缩
+    { name: "NanaZip", cat: "文件与压缩", heat: 72, desc: "开源 7-Zip 现代分支，适配 Windows 11。", url: "https://github.com/M2Team/NanaZip" },
+    { name: "The Unarchiver", cat: "文件与压缩", heat: 66, desc: "macOS 开源解压工具，格式支持广。", url: "https://theunarchiver.com" },
+
+    // 安全与隐私
+    { name: "火绒安全", cat: "安全与隐私", type: "free", heat: 87, desc: "国产免费杀软，无广告、克制好用。", url: "https://www.huorong.cn" },
+    { name: "ProtonVPN", cat: "安全与隐私", type: "brand", heat: 80, desc: "隐私向免费 VPN，无广告（高速档需付费）。", url: "https://protonvpn.com" },
+    { name: "Malwarebytes", cat: "安全与隐私", type: "brand", heat: 78, desc: "免费版恶意软件查杀，无广告。", url: "https://www.malwarebytes.com" },
+    { name: "AdGuard Home", cat: "安全与隐私", heat: 74, desc: "开源网络级广告与追踪拦截。", url: "https://adguard.com/en/adguard-home/overview.html" },
+
+    // 系统工具
+    { name: "Everything", cat: "系统工具", type: "free", heat: 90, desc: "Windows 免费文件名秒搜工具，无广告。", url: "https://www.voidtools.com" },
+    { name: "Microsoft PowerToys", cat: "系统工具", type: "brand", heat: 88, desc: "微软开源增强工具集，效率拉满。", url: "https://learn.microsoft.com/powertoys" },
+    { name: "Snipaste", cat: "系统工具", type: "free", heat: 86, desc: "免费截图+贴图工具，极其好用无广告。", url: "https://www.snipaste.com" },
+    { name: "f.lux", cat: "系统工具", type: "free", heat: 82, desc: "免费护眼工具，按时间自动调色温。", url: "https://justgetflux.com" },
+    { name: "QuickLook", cat: "系统工具", heat: 80, desc: "开源空格预览工具，像 macOS 一样看文件。", url: "https://github.com/QL-Win/QuickLook" },
+    { name: "LightShot", cat: "系统工具", type: "free", heat: 80, desc: "免费轻量截图工具，一键分享。", url: "https://app.prntscr.com" },
+    { name: "Ditto", cat: "系统工具", heat: 78, desc: "开源剪贴板增强，历史粘贴随便挑。", url: "https://ditto-cp.sourceforge.io" },
+    { name: "Listary", cat: "系统工具", type: "free", heat: 74, desc: "免费文件快速搜索与启动增强。", url: "https://www.listary.com" },
+    { name: "WizTree", cat: "系统工具", type: "free", heat: 76, desc: "免费磁盘空间分析，秒级找大文件。", url: "https://www.diskanalyzer.com" },
+    { name: "TranslucentTB", cat: "系统工具", heat: 76, desc: "开源任务栏透明美化工具。", url: "https://github.com/TranslucentTB/TranslucentTB" },
+    { name: "EarTrumpet", cat: "系统工具", heat: 72, desc: "开源 Windows 音量分应用控制。", url: "https://github.com/File-New-Project/EarTrumpet" },
+
+    // 通讯协作
+    { name: "WhatsApp", cat: "通讯协作", type: "brand", heat: 96, desc: "全球流行免费通讯，端到端加密。", url: "https://www.whatsapp.com" },
+    { name: "Discord", cat: "通讯协作", type: "brand", heat: 90, desc: "免费语音文字社区，游戏/社群常用。", url: "https://discord.com" },
+    { name: "Telegram", cat: "通讯协作", type: "brand", heat: 88, desc: "免费高速通讯，客户端开源、云同步。", url: "https://telegram.org" },
+    { name: "飞书", cat: "通讯协作", type: "brand", heat: 86, desc: "字节旗下办公协作平台，免费版好用。", url: "https://www.feishu.cn" },
+    { name: "Zoom", cat: "通讯协作", type: "brand", heat: 85, desc: "免费视频会议，易用稳定。", url: "https://zoom.us" },
+    { name: "Slack", cat: "通讯协作", type: "brand", heat: 82, desc: "团队沟通工具，免费版够用。", url: "https://slack.com" },
+    { name: "Microsoft Teams", cat: "通讯协作", type: "brand", heat: 80, desc: "微软免费协作与会议工具。", url: "https://www.microsoft.com/microsoft-teams" },
+    { name: "Skype", cat: "通讯协作", type: "brand", heat: 70, desc: "微软免费语音视频通话工具。", url: "https://www.skype.com" },
+
+    // 下载与同步
+    { name: "Google Drive", cat: "下载与同步", type: "brand", heat: 92, desc: "谷歌免费网盘，15G 起步、跨端同步。", url: "https://drive.google.com" },
+    { name: "OneDrive", cat: "下载与同步", type: "brand", heat: 90, desc: "微软免费云盘，深度集成 Windows。", url: "https://onedrive.com" },
+    { name: "Dropbox", cat: "下载与同步", type: "brand", heat: 85, desc: "老牌免费网盘，同步稳定。", url: "https://www.dropbox.com" },
+    { name: "Syncthing", cat: "下载与同步", heat: 82, desc: "开源 P2P 文件同步，无需中心服务器。", url: "https://syncthing.net" },
+    { name: "MEGA", cat: "下载与同步", type: "brand", heat: 80, desc: "免费加密网盘，注册即送大容量。", url: "https://mega.nz" },
+    { name: "Motrix", cat: "下载与同步", heat: 74, desc: "开源全能下载工具，支持 BT/HTTP。", url: "https://motrix.app" },
+    { name: "Seafile", cat: "下载与同步", type: "brand", heat: 74, desc: "开源自建网盘，同步性能强。", url: "https://www.seafile.com" },
+    { name: "Aria2", cat: "下载与同步", heat: 72, desc: "开源命令行下载工具，轻量高效。", url: "https://aria2.github.io" },
+
+    // 学习科研
+    { name: "Anki", cat: "学习科研", heat: 84, desc: "开源间隔重复记忆卡，备考神器。", url: "https://apps.ankiweb.net" },
+    { name: "Jupyter", cat: "学习科研", heat: 82, desc: "开源交互式笔记本，数据科学标配。", url: "https://jupyter.org" },
+    { name: "Overleaf", cat: "学习科研", type: "brand", heat: 80, desc: "在线 LaTeX 编辑，免费版够用。", url: "https://www.overleaf.com" },
+    { name: "GeoGebra", cat: "学习科研", heat: 76, desc: "开源数学动态几何与代数工具。", url: "https://www.geogebra.org" },
+
+    // 游戏娱乐
+    { name: "RetroArch", cat: "游戏娱乐", heat: 78, desc: "开源全能游戏模拟器前端，怀旧必备。", url: "https://www.retroarch.com" },
+    { name: "PPSSPP", cat: "游戏娱乐", heat: 76, desc: "开源 PSP 模拟器，跨平台畅玩。", url: "https://www.ppsspp.org" },
+    { name: "Dolphin", cat: "游戏娱乐", heat: 74, desc: "开源 GameCube/Wii 模拟器。", url: "https://dolphin-emu.org" },
+
+    // AI 工具
+    { name: "ChatGPT", cat: "AI 工具", type: "brand", heat: 98, desc: "OpenAI 对话式 AI，免费版即可日常问答与创作。", url: "https://chat.openai.com" },
+    { name: "DeepSeek", cat: "AI 工具", heat: 96, desc: "国产开源大模型，免费、强推理，官网与 App 均可免费用。", url: "https://www.deepseek.com" },
+    { name: "Claude", cat: "AI 工具", type: "brand", heat: 94, desc: "Anthropic 出品对话 AI，免费版擅长长文与写作。", url: "https://claude.ai" },
+    { name: "Gemini", cat: "AI 工具", type: "brand", heat: 92, desc: "Google 多模态 AI 助手，免费版可对话、看图、写代码。", url: "https://gemini.google.com" },
+    { name: "通义千问", cat: "AI 工具", type: "brand", heat: 91, desc: "阿里开源大模型，免费对话、写作、办公一体。", url: "https://tongyi.aliyun.com" },
+    { name: "豆包", cat: "AI 工具", type: "brand", heat: 90, desc: "字节跳动 AI 助手，免费聊天、写作、画图。", url: "https://www.doubao.com" },
+    { name: "Copilot", cat: "AI 工具", type: "brand", heat: 89, desc: "微软 AI 助手，免费版可对话与网页摘要。", url: "https://copilot.microsoft.com" },
+    { name: "文心一言", cat: "AI 工具", type: "brand", heat: 88, desc: "百度对话大模型，免费版可写作、绘画、问答。", url: "https://yiyan.baidu.com" },
+    { name: "Kimi", cat: "AI 工具", type: "brand", heat: 87, desc: "月之暗面长文本 AI 助手，免费版可读长文档。", url: "https://kimi.moonshot.cn" },
+    { name: "腾讯混元", cat: "AI 工具", type: "brand", heat: 86, desc: "腾讯大模型，免费对话、写作、多模态。", url: "https://hunyuan.tencent.com" },
+    { name: "Ollama", cat: "AI 工具", heat: 85, desc: "开源本地大模型运行框架，一行命令拉起 LLM。", url: "https://ollama.com" },
+    { name: "讯飞星火", cat: "AI 工具", type: "brand", heat: 85, desc: "科大讯飞认知大模型，免费版可对话、写作、语音。", url: "https://xinghuo.xfyun.cn" },
+    { name: "智谱清言", cat: "AI 工具", type: "brand", heat: 83, desc: "智谱 AI 的 GLM 大模型助手，免费版可用。", url: "https://chat.zhipuai.cn" },
+    { name: "Perplexity", cat: "AI 工具", type: "brand", heat: 82, desc: "AI 对话式搜索引擎，免费版可联网问答。", url: "https://www.perplexity.ai" },
+    { name: "HuggingChat", cat: "AI 工具", heat: 80, desc: "Hugging Face 开源对话 AI，免登录免费用。", url: "https://huggingface.co/chat" },
+    { name: "Stable Diffusion WebUI", cat: "AI 工具", heat: 79, desc: "开源 AI 绘画工具，本地部署免费出图。", url: "https://github.com/AUTOMATIC1111/stable-diffusion-webui" },
+    { name: "LM Studio", cat: "AI 工具", type: "free", heat: 78, desc: "免费桌面端，本地运行与调试开源大模型。", url: "https://lmstudio.ai" },
+    { name: "ComfyUI", cat: "AI 工具", heat: 76, desc: "开源节点式 AI 绘画工作流，免费自部署。", url: "https://www.comfy.org" },
+    { name: "即梦", cat: "AI 工具", type: "brand", heat: 75, desc: "字节 AI 创作平台，免费文生图/视频。", url: "https://jimeng.jianying.com" },
+    { name: "可灵", cat: "AI 工具", type: "brand", heat: 75, desc: "快手 AI 视频生成，免费版可生成短视频。", url: "https://klingai.kuaishou.com" },
+    { name: "海螺AI", cat: "AI 工具", type: "brand", heat: 74, desc: "MiniMax 对话与语音 AI，免费版可用。", url: "https://hailuoai.com" },
+    { name: "Whisper", cat: "AI 工具", heat: 73, desc: "OpenAI 开源语音转文字模型，本地免费用。", url: "https://github.com/openai/whisper" },
+    { name: "Meta AI", cat: "AI 工具", type: "brand", heat: 72, desc: "Meta 的免费 AI 助手，可对话与生成图像。", url: "https://www.meta.ai" },
+    { name: "百川智能", cat: "AI 工具", type: "brand", heat: 71, desc: "百川大模型，免费版可对话与写作。", url: "https://www.baichuan-ai.com" },
+    { name: "Poe", cat: "AI 工具", type: "brand", heat: 70, desc: "Quora 旗下 AI 聚合，免费版可试用多款模型。", url: "https://poe.com" },
+    { name: "NotebookLM", cat: "AI 工具", type: "brand", heat: 69, desc: "Google AI 笔记助手，免费基于文档问答。", url: "https://notebooklm.google.com" },
+    { name: "Cursor", cat: "AI 工具", type: "brand", heat: 68, desc: "AI 代码编辑器，免费版含基础智能补全。", url: "https://cursor.com" },
+    { name: "Suno", cat: "AI 工具", type: "brand", heat: 67, desc: "AI 音乐生成，免费版可创作歌曲。", url: "https://suno.com" },
+    { name: "Gamma", cat: "AI 工具", type: "brand", heat: 65, desc: "AI 生成 PPT/网页，免费版可创建演示。", url: "https://gamma.app" },
+    { name: "Llama", cat: "AI 工具", heat: 63, desc: "Meta 开源大模型，可本地免费部署。", url: "https://www.llama.com" },
+    { name: "Mistral", cat: "AI 工具", heat: 62, desc: "开源高效大模型，免费权重可自部署。", url: "https://mistral.ai" },
+    { name: "v0.dev", cat: "AI 工具", type: "brand", heat: 61, desc: "Vercel AI 前端生成，免费版可生成 UI 代码。", url: "https://v0.dev" },
+    { name: "阶跃星辰", cat: "AI 工具", type: "brand", heat: 60, desc: "阶跃大模型，免费版可对话与多模态。", url: "https://www.stepfun.com" },
+    { name: "Krea", cat: "AI 工具", type: "brand", heat: 60, desc: "AI 实时绘画与设计工具，免费版可用。", url: "https://www.krea.ai" },
+    { name: "Runway", cat: "AI 工具", type: "brand", heat: 60, desc: "AI 视频生成与编辑，免费版可生成片段。", url: "https://runwayml.com" }
+  ];
+
+  // 历史条目无 heat 字段，用 HEAT 映射补齐（0-100，越高越热门）
+  const HEAT = {
+    "LibreOffice":86,"ONLYOFFICE":76,"Joplin":80,"Logseq":74,"LyX":60,"Zotero":78,"Calibre":82,"diagrams.net":84,"Cryptomator":70,
+    "Firefox":92,"Brave":84,"Tor Browser":80,"qBittorrent":86,"Transmission":82,"Floorp":68,
+    "Visual Studio Code":95,"Git":92,"Neovim":74,"Node.js":88,"VSCodium":76,"Hoppscotch":70,"DBeaver":80,"Podman":72,"Tabby":70,
+    "GIMP":88,"Inkscape":84,"Krita":82,"Blender":90,"darktable":76,"RawTherapee":74,"Scribus":70,
+    "VLC":98,"Audacity":86,"HandBrake":85,"OBS Studio":88,"Strawberry":72,"MPV":78,"Audacious":70,"Kdenlive":76,"Shotcut":72,
+    "7-Zip":90,"PeaZip":78,"FileZilla":84,"FreeFileSync":80,"Double Commander":76,"Czkawka":70,
+    "KeePass":88,"KeePassXC":86,"Bitwarden":86,"VeraCrypt":82,"GnuPG":70,"Pi-hole":72,"WireGuard":76,
+    "Sumatra PDF":84,"Greenshot":84,"ShareX":85,"PDF Arranger":68,"Rclone":80,"Ventoy":84,"BleachBit":72,
+    "Signal":84,"Thunderbird":78,"Element":72,"Jitsi Meet":72,"Rocket.Chat":70,"Mastodon":68,
+    "LocalSend":86,"Nextcloud":83,"Floccus":70,
+    "腾讯文档":85,"语雀":74,"钉钉":88,"360极速浏览器":78,"腾讯会议":87,"企业微信":84,"微信":98,"360压缩":76,"阿里云盘":84,"腾讯微云":78,"微信输入法":82,"360驱动大师":72,"360安全卫士":83,"腾讯电脑管家":80,"QQ影音":80
+  };
+  DATA.forEach(d => { if (d.heat == null) d.heat = HEAT[d.name] ?? 50; });
+  DATA.sort((a, b) => b.heat - a.heat); // 默认按热度从高到低
+
+  const grid = document.getElementById('grid');
+  const filtersEl = document.getElementById('filters');
+  const searchEl = document.getElementById('search');
+  const countPill = document.getElementById('countPill');
+
+  const cats = ["全部", ...Array.from(new Set(DATA.map(d => d.cat)))];
+  let activeCat = "全部";
+  let keyword = "";
+
+  cats.forEach(c => {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (c === "全部" ? ' active' : '');
+    chip.textContent = c;
+    chip.onclick = () => {
+      activeCat = c;
+      document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+      chip.classList.add('active');
+      render();
+    };
+    filtersEl.appendChild(chip);
+  });
+
+  function initials(name) {
+    const clean = name.replace(/[^A-Za-z0-9一-龥]/g, '');
+    return clean.slice(0, 2).toUpperCase();
+  }
+
+  function domainOf(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
+  }
+
+  function render() {
+    const kw = keyword.trim().toLowerCase();
+    const list = DATA.filter(d => {
+      const okCat = activeCat === "全部" || d.cat === activeCat;
+      const okKw = !kw || d.name.toLowerCase().includes(kw) || d.desc.toLowerCase().includes(kw) || d.cat.toLowerCase().includes(kw);
+      return okCat && okKw;
+    });
+
+    countPill.textContent = "收录 " + DATA.length + " 款 · 按热度排序";
+    grid.innerHTML = "";
+
+    if (list.length === 0) {
+      grid.innerHTML = '<div class="empty">没有匹配的软件，换个关键词试试。</div>';
+      return;
+    }
+
+    list.forEach(d => {
+      const a = document.createElement('a');
+      a.className = 'card';
+      a.href = d.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.innerHTML = `
+        <div class="card-head">
+          <div class="card-ico">
+            <img class="card-logo" alt="" loading="lazy" src="https://icons.duckduckgo.com/ip3/${domainOf(d.url)}.ico" onerror="if(!this.dataset.f1){this.dataset.f1=1;this.src='https://www.google.com/s2/favicons?domain=${domainOf(d.url)}&amp;sz=64';}else if(!this.dataset.f2){this.dataset.f2=1;this.src='https://favicon.im/${domainOf(d.url)}';}else{this.style.display='none';}">
+            <span class="card-ico-text">${initials(d.name)}</span>
+          </div>
+          <div>
+            <p class="card-name">${d.name}</p>
+            <div class="card-cat">${d.cat}</div>
+          </div>
+        </div>
+        <p class="card-desc">${d.desc}</p>
+        <div class="card-heat">热度 ${d.heat}</div>
+        <div class="card-foot">
+          <span class="card-tag">${d.type === 'brand' ? '免费 · 大厂' : d.type === 'free' ? '免费' : '免费 · 开源'}</span>
+          <span class="card-go">前往官网 ↗</span>
+        </div>`;
+      grid.appendChild(a);
+    });
+  }
+
+  searchEl.addEventListener('input', e => { keyword = e.target.value; render(); });
+  render();
+</script>
+</body>
+</html>
